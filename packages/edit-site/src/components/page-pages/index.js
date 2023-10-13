@@ -19,6 +19,7 @@ import Link from '../routes/link';
 import { DataViews } from '../dataviews';
 import useTrashPostAction from '../actions/trash-post';
 import Media from '../media';
+import Editor from '../editor';
 
 const EMPTY_ARRAY = [];
 const EMPTY_OBJECT = {};
@@ -123,6 +124,7 @@ export default function PagePages() {
 										postId: item.id,
 										postType: item.type,
 										canvas: 'edit',
+										path: '/pages',
 									} }
 								>
 									{ decodeEntities(
@@ -223,16 +225,23 @@ export default function PagePages() {
 
 	// TODO: we need to handle properly `data={ data || EMPTY_ARRAY }` for when `isLoading`.
 	return (
-		<Page title={ __( 'Pages' ) }>
-			<DataViews
-				paginationInfo={ paginationInfo }
-				fields={ fields }
-				actions={ actions }
-				data={ pages || EMPTY_ARRAY }
-				isLoading={ isLoadingPages }
-				view={ view }
-				onChangeView={ onChangeView }
-			/>
-		</Page>
+		<>
+			<Page title={ __( 'Pages' ) }>
+				<DataViews
+					paginationInfo={ paginationInfo }
+					fields={ fields }
+					actions={ actions }
+					data={ pages || EMPTY_ARRAY }
+					isLoading={ isLoadingPages }
+					view={ view }
+					onChangeView={ onChangeView }
+				/>
+			</Page>
+			<Page>
+				<div className="edit-site-page-pages-preview">
+					<Editor />
+				</div>
+			</Page>
+		</>
 	);
 }
