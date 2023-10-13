@@ -128,12 +128,15 @@ export default function PagePages() {
 										canvas: 'edit',
 									} }
 									onClick={ ( event ) => {
+										if ( view.type !== 'side-by-side' ) {
+											return;
+										}
 										event.preventDefault();
-										setView( {
-											...view,
-											selectedPostId: page.id,
-											selectedPostType: page.type,
-										} );
+										setView( ( _view ) => ( {
+											..._view,
+											selectedPostId: item.id,
+											selectedPostType: item.type,
+										} ) );
 									} }
 								>
 									{ decodeEntities(
@@ -207,7 +210,7 @@ export default function PagePages() {
 				enableSorting: false,
 			},
 		],
-		[ postStatuses, authors ]
+		[ postStatuses, authors, view.type ]
 	);
 
 	const trashPostAction = useTrashPostAction();
@@ -246,14 +249,16 @@ export default function PagePages() {
 					onChangeView={ onChangeView }
 				/>
 			</Page>
-			<Page>
-				<div className="edit-site-page-pages-preview">
-					<Editor
-						postId={ view.selectedPostId }
-						postType={ view.selectedPostType }
-					/>
-				</div>
-			</Page>
+			{ view.type === 'side-by-side' && (
+				<Page>
+					<div className="edit-site-page-pages-preview">
+						<Editor
+							postId={ view.selectedPostId }
+							postType={ view.selectedPostType }
+						/>
+					</div>
+				</Page>
+			) }
 		</>
 	);
 }

@@ -15,6 +15,13 @@ import Pagination from './pagination';
 import ViewActions from './view-actions';
 import Filters from './filters';
 import { ViewGrid } from './view-grid';
+import { ViewSideBySide } from './view-side-by-side';
+
+const viewMap = {
+	list: ViewList,
+	grid: ViewGrid,
+	'side-by-side': ViewSideBySide,
+};
 
 export default function DataViews( {
 	view,
@@ -25,7 +32,7 @@ export default function DataViews( {
 	isLoading = false,
 	paginationInfo,
 } ) {
-	const ViewComponent = view.type === 'list' ? ViewList : ViewGrid;
+	const ViewComponent = viewMap[ view.type ];
 	const _fields = useMemo( () => {
 		return fields.map( ( field ) => ( {
 			...field,
