@@ -19,7 +19,7 @@ import Link from '../routes/link';
 import { DataViews } from '../dataviews';
 import useTrashPostAction from '../actions/trash-post';
 import Media from '../media';
-import Editor from '../editor';
+import Editor from './editor';
 
 const EMPTY_ARRAY = [];
 const EMPTY_OBJECT = {};
@@ -48,6 +48,8 @@ export default function PagePages() {
 		// better to keep track of the hidden ones.
 		hiddenFields: [ 'date', 'featured-image' ],
 		layout: {},
+		selectedPostId: null,
+		selectedPostType: null,
 	} );
 	// Request post statuses to get the proper labels.
 	const { records: statuses } = useEntityRecords( 'root', 'status' );
@@ -124,7 +126,14 @@ export default function PagePages() {
 										postId: item.id,
 										postType: item.type,
 										canvas: 'edit',
-										path: '/pages',
+									} }
+									onClick={ ( event ) => {
+										event.preventDefault();
+										setView( {
+											...view,
+											selectedPostId: page.id,
+											selectedPostType: page.type,
+										} );
 									} }
 								>
 									{ decodeEntities(
@@ -239,7 +248,10 @@ export default function PagePages() {
 			</Page>
 			<Page>
 				<div className="edit-site-page-pages-preview">
-					<Editor />
+					<Editor
+						postId={ view.selectedPostId }
+						postType={ view.selectedPostType }
+					/>
 				</div>
 			</Page>
 		</>
