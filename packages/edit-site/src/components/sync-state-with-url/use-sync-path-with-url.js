@@ -90,6 +90,7 @@ export default function useSyncPathWithURL() {
 				updateUrlParams( {
 					postType: 'page',
 					postId: navigatorParams?.postId,
+					path: undefined,
 				} );
 			} else if ( navigatorLocation.path === '/patterns' ) {
 				updateUrlParams( {
