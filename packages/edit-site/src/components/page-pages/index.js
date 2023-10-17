@@ -16,7 +16,7 @@ import { dateI18n, getDate, getSettings } from '@wordpress/date';
  */
 import Page from '../page';
 import Link from '../routes/link';
-import { DataViews } from '../dataviews';
+import { DataViews, viewTypeSupportsMap } from '../dataviews';
 import useTrashPostAction from '../actions/trash-post';
 import Media from '../media';
 import Editor from './editor';
@@ -31,6 +31,8 @@ const defaultConfigPerViewType = {
 };
 
 export default function PagePages() {
+	const postType = 'page';
+	const [ selection, setSelection ] = useState( [] );
 	const [ view, setView ] = useState( {
 		type: 'list',
 		filters: {
@@ -48,8 +50,6 @@ export default function PagePages() {
 		// better to keep track of the hidden ones.
 		hiddenFields: [ 'date', 'featured-image' ],
 		layout: {},
-		selectedPostId: null,
-		selectedPostType: null,
 	} );
 	// Request post statuses to get the proper labels.
 	const { records: statuses } = useEntityRecords( 'root', 'status' );
@@ -79,7 +79,7 @@ export default function PagePages() {
 		isResolving: isLoadingPages,
 		totalItems,
 		totalPages,
-	} = useEntityRecords( 'postType', 'page', queryArgs );
+	} = useEntityRecords( 'postType', postType, queryArgs );
 
 	const { records: authors } = useEntityRecords( 'root', 'user', {
 		who: 'authors',
@@ -128,15 +128,13 @@ export default function PagePages() {
 										canvas: 'edit',
 									} }
 									onClick={ ( event ) => {
-										if ( view.type !== 'side-by-side' ) {
-											return;
+										if (
+											viewTypeSupportsMap[ view.type ]
+												.preview
+										) {
+											event.preventDefault();
+											setSelection( [ item.id ] );
 										}
-										event.preventDefault();
-										setView( ( _view ) => ( {
-											..._view,
-											selectedPostId: item.id,
-											selectedPostType: item.type,
-										} ) );
 									} }
 								>
 									{ decodeEntities(
@@ -247,15 +245,32 @@ export default function PagePages() {
 					isLoading={ isLoadingPages }
 					view={ view }
 					onChangeView={ onChangeView }
+					selection={ selection }
+					onChangeSelection={ setSelection }
 				/>
 			</Page>
-			{ view.type === 'side-by-side' && (
+			{ viewTypeSupportsMap[ view.type ].preview && (
 				<Page>
 					<div className="edit-site-page-pages-preview">
-						<Editor
-							postId={ view.selectedPostId }
-							postType={ view.selectedPostType }
-						/>
+						{ selection.length === 1 && (
+							<Editor
+								postId={ selection[ 0 ] }
+								postType={ postType }
+							/>
+						) }
+						{ selection.length !== 1 && (
+							<div
+								style={ {
+									display: 'flex',
+									flexDirection: 'column',
+									justifyContent: 'center',
+									textAlign: 'center',
+									height: '100%',
+								} }
+							>
+								<p>{ __( 'Select a page to preview' ) }</p>
+							</div>
+						) }
 					</div>
 				</Page>
 			) }

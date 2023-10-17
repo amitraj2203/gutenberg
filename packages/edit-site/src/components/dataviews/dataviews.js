@@ -17,7 +17,16 @@ import Filters from './filters';
 import { ViewGrid } from './view-grid';
 import { ViewSideBySide } from './view-side-by-side';
 
-const viewMap = {
+// To do: convert to view type registry.
+export const viewTypeSupportsMap = {
+	list: {},
+	grid: {},
+	'side-by-side': {
+		preview: true,
+	},
+};
+
+const viewTypeMap = {
 	list: ViewList,
 	grid: ViewGrid,
 	'side-by-side': ViewSideBySide,
@@ -32,7 +41,7 @@ export default function DataViews( {
 	isLoading = false,
 	paginationInfo,
 } ) {
-	const ViewComponent = viewMap[ view.type ];
+	const ViewComponent = viewTypeMap[ view.type ];
 	const _fields = useMemo( () => {
 		return fields.map( ( field ) => ( {
 			...field,
