@@ -117,7 +117,7 @@ export default function PagePages() {
 				header: __( 'Title' ),
 				id: 'title',
 				getValue: ( { item } ) => item.title?.rendered || item.slug,
-				render: ( { item } ) => {
+				render: ( { item, view: { type } } ) => {
 					return (
 						<VStack spacing={ 1 }>
 							<Heading as="h3" level={ 5 }>
@@ -129,8 +129,7 @@ export default function PagePages() {
 									} }
 									onClick={ ( event ) => {
 										if (
-											viewTypeSupportsMap[ view.type ]
-												.preview
+											viewTypeSupportsMap[ type ].preview
 										) {
 											event.preventDefault();
 											setSelection( [ item.id ] );
@@ -208,7 +207,7 @@ export default function PagePages() {
 				enableSorting: false,
 			},
 		],
-		[ postStatuses, authors, view.type ]
+		[ postStatuses, authors ]
 	);
 
 	const trashPostAction = useTrashPostAction();
